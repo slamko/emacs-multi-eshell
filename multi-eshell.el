@@ -14,43 +14,44 @@
 (defvar-local ees--eshell-last-id nil
   "Last identifier for eshell buffer")
 
-(defvar ess--eshell-max-id 0
+(defvar ees--eshell-max-id 0
   "Amount of eshell buffers created with ees") 
 
 (defun ees--get-eshell-buf-name (num)
-  "Get the name of the buffer created with ees/eshell-new where NUM is the buffer id."
+  "Get the name of the buffer created with eshell-new where NUM is the buffer id."
   (concat "*eshell*<" (number-to-string num) ">"))
 
 (defun ees--eshell-new-rec (cnt)
-  (if (get-buffer (get-eshell-buf-name cnt))
-	  (eshell-new-rec (+ cnt 1))
+  (if (get-buffer (ees--get-eshell-buf-name cnt))
+	  (ees--eshell-new-rec (+ cnt 1))
 	  (eshell
 	   (progn
-		 (when (> cnt eshell-max-id)
-		   (setq eshell-max-id cnt))
-		 (setq eshell-last-id cnt)))))
+		 (when (> cnt ees--eshell-max-id)
+		   (setq ees--eshell-max-id cnt))
+		 (setq ees--eshell-max-id cnt)))))
 
 (defun ees/eshell-new (&optional buf-id)
-  "Create new eshell buffer with the minimal available id. You can specify buffer id explicitly with an optional BUF-ID argument."x
+  "Create new eshell buffer with the  available id.
+You can specify buffer id explicitly with an optional BUF-ID argument."
   (interactive)
-  (eshell-new-rec (or buf-id 1)))
+  (ees--eshell-new-rec (or buf-id 1)))
 
 (defun ees--eshell-last-rec (id &optional ebuffer)
-  (if (equal eshell-max-id id)
+  (if (equal ees--eshell-max-id id)
 	  (if ebuffer
 		  (switch-to-buffer ebuffer)
-		(eshell (setq eshell-last-id 1)))
-	(eshell-last-rec (+ id 1) (get-buffer (get-eshell-buf-name id)))))
+		(eshell (setq ees--eshell-last-id 1)))
+	(ees--eshell-last-rec (+ id 1) (get-buffer (ees--get-eshell-buf-name id)))))
 
 (defun ees/eshell-last (&optional id)
   "Switch to last available eshell buffer. If no eshell buffers found - create one.
 Optionally accepts ID of the eshell buffer to switch directly."
   (interactive)
   (let*
-	  ((eshell-id (or id eshell-last-id))
-	   (eshell-buf (get-buffer (get-eshell-buf-name eshell-id))))
+	  ((eshell-id (or id ees--eshell-last-id))
+	   (eshell-buf (get-buffer (ees--get-eshell-buf-name eshell-id))))
     (if eshell-buf
 	  (switch-to-buffer eshell-buf)
-	  (eshell-last-rec 1))))
+	  (ees--eshell-last-rec 1))))
 
 (provide 'emacs-multi-eshell)
