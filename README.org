@@ -1,1 +1,27 @@
-# Emacs multi eshell buffer managing tool
+* Emacs multi eshell buffer managing tool
+  GNU Emacs extension for managing multiple eshell buffers and windows.
+  Basically this is a [[https://github.com/emacsmirror/multi-eshell][multi-eshell]] (which has a bit misleading name and stands for Multi Emacs Shell,
+  and in fact does not do well with real *eshell*) rewrite specifically to support Emacs's *eshell*.
+
+** Installation
+*** With Straight package manager
+#+begin_src emacs-lisp
+(straight-use-package
+ '(el-patch :host github :repo "slamko/emacs-multi-eshell"
+            :branch "master"))
+#+end_src
+*** Or cloning the repo and loading the path
+#+begin_src sh
+git clone git@github.com:slamko/emacs-multi-eshell.git
+#+end_src
+
+#+begin_src emacs-lisp
+(add-to-list 'load-path "~/path-to-repo")
+(require 'emacs-multi-eshell)
+#+end_src
+
+** Features
+   The package provides two functions for creating and switching between *eshell* buffers:
+   
+   1. *ees/eshell-new*  - create new eshell buffer and switches to it.
+   2. *ees/eshell-last* - switch to last created buffer, if no was found - create one.
